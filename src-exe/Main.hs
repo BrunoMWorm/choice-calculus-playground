@@ -35,4 +35,4 @@ e4 =
 main :: IO ()
 main = do
   putStrLn "Expressions"
-  let e = Add e1 e2 in print $ evalEA (Lit 0) [] 0 e
+  let e = Add e1 e2 in let (c',e',_) = evalEA (Lit 0) [] 0 e4 in print $ evalEA e' c' 2 e
