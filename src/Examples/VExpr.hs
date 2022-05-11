@@ -8,12 +8,7 @@ data Expr
   = Lit Int
   | Add Expr Expr
   | VExpr VExpr
-  deriving (Eq)
-
-instance Show Expr where
-  show (Lit int) = show int
-  show (Add e1 e2) = show e1 <> " + " <> show e2
-  show (VExpr vexpr) = show vexpr
+  deriving (Eq, Show)
 
 eval :: Expr -> V Int
 eval (Lit i) = Obj i
@@ -66,13 +61,16 @@ evalEA expI cache loc nexp =
       newCache = updateCache (nexp, analysisLocalChange) cache
    in (newCache, evolvedModel, eval'' newCache evolvedModel)
 
+veval'' :: Cache -> VExpr -> V Int
+veval'' c = liftV (eval'' c)
+
 eval'' :: Cache -> Expr -> V Int
 eval'' c e@(Lit _) = case e `inCache` c of
   Just i -> i
   Nothing -> eval e
 eval'' c e@(Add e1 e2) = case e `inCache` c of
   Just i -> i
-  Nothing -> (+) <$> eval e1 <*> eval e2
+  Nothing -> (+) <$> eval'' c e1 <*> eval'' c e2
 eval'' c e@(VExpr ve) = case e `inCache` c of
   Just i -> i
-  Nothing -> veval ve
+  Nothing -> veval'' c ve
