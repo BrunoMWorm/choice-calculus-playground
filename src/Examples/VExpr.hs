@@ -44,7 +44,7 @@ evolAux :: Expr -> PreOrderLocation -> Expr -> (Expr, Int)
 evolAux expI loc nexp = case (compare loc 0, expI) of
   (LT, _) -> error $ "Error on search: loc '" <> show loc <> "' is less than zero."
   (EQ, _) -> (nexp, 0)
-  (GT, Lit _) -> error $ "Error on search: loc '" <> show loc <> "' is greater than zero, but there are no more subexpressions to search."
+  (GT, l@(Lit v)) -> (l, loc)
   (GT, Add left right) ->
     let (leftWalk, nLoc) = evolAux left (loc -1) nexp
      in if nLoc == 0
