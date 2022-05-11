@@ -8,7 +8,7 @@ data Expr
   = Lit Int
   | Add Expr Expr
   | VExpr VExpr
-  deriving (Eq, Show)
+  deriving (Eq)
 
 eval :: Expr -> V Int
 eval (Lit i) = Obj i
@@ -17,6 +17,11 @@ eval (VExpr ve) = ve >>= eval
 
 veval :: VExpr -> V Int
 veval = liftV eval
+
+instance Show Expr where
+  show (Lit int) = show int
+  show (Add e1 e2) = show e1 <> " + " <> show e2
+  show (VExpr vexpr) = show vexpr
 
 type Cache = [(Expr, V Int)]
 
